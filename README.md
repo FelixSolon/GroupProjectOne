@@ -3,9 +3,9 @@ Project Title
 
 
 Team Members
-   Zack Henry
-   Dwayne Obenshain
-   Eric Stanulis
+   * Zack Henry
+   * Dwayne Obenshain
+   * Eric Stanulis
 
 Project Description
    Will take a search query for a job title and location and return jobs and nearby apartments/houses/etc. that fall within a 25-40% (customizable if we have time) range of the salary
