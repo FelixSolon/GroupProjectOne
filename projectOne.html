@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+
+<html lang="en-us">
+
+<head>
+
+  <meta charset="UTF-8">
+  <title>Migrate</title>
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+  <!-- LINK TO FIREBASE GOES HERE -->
+  <script src="https://www.gstatic.com/firebasejs/4.3.1/firebase.js"></script>
+
+</head>
+
+<body>
+
+  <div class="container">
+
+    <br>
+
+    <!-- Jumbotron -->
+    <div class="jumbotron">
+      <h1 class="text-center">ZED: Migrating Made Easy</h1>
+      <h3 class="text-center">Search a job. Find a home. Make the move.</h3>
+    </div>
+
+    <div class="row">
+
+      <!-- Sign-Up Panel-->
+      <div class="col-md-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Your Future Awaits!</h3>
+          </div>
+          <div class="panel-body">
+
+            <!-- Sign-up Form (note the various input "types")-->
+
+            <form role="form">
+              <div class="form-group">
+                <label for="job-input">Job Title:</label>
+                <input class="form-control" id="job-input" type="text">
+              </div>
+              <div class="form-group">
+                <label for="location-input">Location:</label>
+                <input class="form-control" id="location-input" type="text">
+              </div>
+              <div class="form-group">
+                <!--<label for="age-input">Salary Range:</label> -->
+                
+
+                <!-- dropdown options -->
+                  <div class="dropdown">
+                    <button class="btn btn-default dropdown-toggle" id="salaryRange-input" type="button" data-toggle="dropdown">Salary Range
+                    <span class="caret"></span></button>
+                    <ul class="dropdown-menu">
+                      <li>$20,000 - $40,000</li>
+                      <li>$40,000 - $70,000</li>
+                      <li>$70,000 - $100,000</li>
+                      <li>$100,000 - $300,000</li>
+                      <li>$300,000+</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <!-- input class="form-control" id="age-input" type="number"> -->
+              
+              <button class="btn btn-default pull-right" id="add-user" type="submit">Submit</button>
+            </form>
+
+            </div>
+          </div>
+
+        </div>
+
+      
+
+      <!-- Most Recent Member Panel-->
+      <div class="col-lg-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Most Recent Job Search</h3>
+          </div>
+          <div class="panel-body" id="recent-member">
+            <h2 id="job-display"></h2>
+            <h4 id="location-display"></h4>
+            <h4 id="salaryRange-display"></h4>
+          </div>
+        </div>
+      </div> 
+    </div>
+  </div>
+</div>
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery.js"></script>
+
+  <!-- Script -->
+  <script>
+    // ========================================== START CODING BELOW!!
+
+    // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyD6byBIx9RMcfhESzbA7P95LHhANnW4BhA",
+    authDomain: "zedprojectone.firebaseapp.com",
+    databaseURL: "https://zedprojectone.firebaseio.com",
+    projectId: "zedprojectone",
+    storageBucket: "zedprojectone.appspot.com",
+    messagingSenderId: "954689702432"
+    };
+
+    firebase.initializeApp(config);
+
+    // Create a variable to reference the database.
+    var database = firebase.database();
+
+    // Initial Values
+    var job = "";
+    var location = "";
+    var salary = 0;   //ask about imputting dropdowns
+
+    // Capture Button Click
+    $("#add-user").on("click", function(event) {
+      event.preventDefault();
+
+      // Grabbed values from text boxes
+      job = $("#job-input").val().trim();
+      name = $("#location-input").val().trim();
+      Salary = $("#salaryRange-input").val().trim();
+
+      // Code for handling the push
+      database.ref().push({
+        job: job,
+        location: location,
+        salary: salary,
+        dateAdded: firebase.database.ServerValue.TIMESTAMP
+      });
+
+    });
+
+    // Firebase watcher + initial loader + order/limit HINT: .on("child_added"
+    database.ref().orderByChild("dateAdded").limitToLast(1).on("child_added", function(snapshot) {
+      // storing the snapshot.val() in a variable for convenience
+      var sv = snapshot.val();
+
+      // Console.loging the last user's data
+      console.log(sv.job);
+      console.log(sv.location);
+      console.log(sv.salary);
+
+      // Change the HTML to reflect
+      $("#job-display").html(sv.job);
+      $("#location-display").html(sv.location);
+      $("#salaryRange-display").html(sv.salary);
+
+      // Handle the errors
+    }, function(errorObject) {
+      console.log("Errors handled: " + errorObject.code);
+    });
+  </script>
+
+</body>
+
+</html>
