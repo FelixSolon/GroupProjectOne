@@ -1,71 +1,177 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Place searches</title>
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-    <meta charset="utf-8">
-    <style>
-      /* Always set the map height explicitly to define the size of the div
-       * element that contains the map. */
-      #map {
-        height: 100%;
-      }
-      /* Optional: Makes the sample page fill the window. */
-      html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
-    </style>
-    <script>
-      // This example requires the Places library. Include the libraries=places
-      // parameter when you first load the API. For example:
-      // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
 
-      var map;
-      var infowindow;
+<html lang="en-us">
 
-      function initMap() {
-        var pyrmont = {lat: -33.867, lng: 151.195};
+<head>
 
-        map = new google.maps.Map(document.getElementById('map'), {
-          center: pyrmont,
-          zoom: 15
-        });
+  <meta charset="UTF-8">
+  <title>Migrate</title>
 
-        infowindow = new google.maps.InfoWindow();
-        var service = new google.maps.places.PlacesService(map);
-        service.nearbySearch({
-          location: pyrmont,
-          radius: 500,
-          type: ['dentist']
-        }, callback);
-      }
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
-      function callback(results, status) {
-        if (status === google.maps.places.PlacesServiceStatus.OK) {
-          for (var i = 0; i < results.length; i++) {
-            createMarker(results[i]);
-          }
-        }
-      }
+  <!-- LINK TO FIREBASE GOES HERE -->
+  <script src="https://www.gstatic.com/firebasejs/4.3.1/firebase.js"></script>
 
-      function createMarker(place) {
-        var placeLoc = place.geometry.location;
-        var marker = new google.maps.Marker({
-          map: map,
-          position: place.geometry.location
-        });
+</head>
 
-        google.maps.event.addListener(marker, 'click', function() {
-          infowindow.setContent(place.name);
-          infowindow.open(map, this);
-        });
-      }
-    </script>
-  </head>
-  <body>
-    <div id="map"></div>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAnpNhNn2dOYuHrpHCd4A80FvWNelv56zM&libraries=places&callback=initMap" async defer></script>
-  </body>
+<body>
+
+  <div class="container">
+
+    <br>
+
+    <!-- Jumbotron -->
+    <div class="jumbotron">
+      <h1 class="text-center">ZED: Migrating Made Easy</h1>
+      <h3 class="text-center">Search a job. Find a home. Make the move.</h3>
+    </div>
+
+    <div class="row">
+
+      <!-- Sign-Up Panel-->
+      <div class="col-md-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Your Future Awaits!</h3>
+          </div>
+          <div class="panel-body">
+
+            <!-- Sign-up Form (note the various input "types")-->
+
+            <form role="form">
+              <div class="form-group">
+                <label for="job-input">Job Title:</label>
+                <input class="form-control" id="job-input" type="text">
+              </div>
+              <div class="form-group">
+                <label for="anythingElse-input">Location:</label>
+                <input class="form-control" id="anythingElse-input" type="text">
+              </div>
+              <div class="form-group">
+                <!--<label for="age-input">Salary Range:</label> -->
+                
+
+                <!-- dropdown options -->
+                <div class="form-group">
+                  <label for="salaryRange-input">Select list:</label>
+                  <select class="form-control" id="salaryRange-input">
+                    <option>$20,000 - $40,000</option>
+                    <option>$40,000 - $70,000</option>
+                    <option>$70,000 - $100,000</option>
+                    <option>$100,000 - $300,000</option>
+                    <option>$300,000+</option>
+                  </select>
+                </div>
+                  <!-- <div class="dropdown">
+                    <button class="btn btn-default dropdown-toggle" id="salaryRange-input" type="button" data-toggle="dropdown">Salary Range
+                    <span class="caret"></span></button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                      <li>$20,000 - $40,000</li>
+                      <li>$40,000 - $70,000</li>
+                      <li>$70,000 - $100,000</li>
+                      <li>$100,000 - $300,000</li>
+                      <li>$300,000+</li>
+                    </ul>
+                  </div> -->
+                </div>
+
+                <!-- input class="form-control" id="age-input" type="number"> -->
+              
+              <button class="btn btn-default   pull-right" id="add-user" type="submit">Submit</button>
+            </form>
+
+            </div>
+          </div>
+
+        </div>
+
+      
+
+      <!-- Most Recent Member Panel-->
+      <div class="col-lg-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Most Recent Job Search</h3>
+          </div>
+          <div class="panel-body" id="recent-member">
+            <h2 id="job-display"></h2>
+            <h4 id="anythingElse-display"></h4>
+            <h4 id="salaryRange-display"></h4>
+          </div>
+        </div>
+      </div> 
+    </div>
+  </div>
+</div>
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery.js"></script>
+
+  <!-- Script -->
+  <script>
+    // ========================================== START CODING BELOW!!
+
+    // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyD6byBIx9RMcfhESzbA7P95LHhANnW4BhA",
+    authDomain: "zedprojectone.firebaseapp.com",
+    databaseURL: "https://zedprojectone.firebaseio.com",
+    projectId: "zedprojectone",
+    storageBucket: "zedprojectone.appspot.com",
+    messagingSenderId: "954689702432"
+    };
+
+    firebase.initializeApp(config);
+
+    // Create a variable to reference the database.
+    var database = firebase.database();
+
+    // Initial Values
+    var job;
+    var anythingElse;
+    var salary;   //ask about inputting dropdowns
+
+    // Capture Button Click
+    $(document).on("click", "#add-user", function(event) {
+      event.preventDefault();
+
+      // Grabbed values from text boxes
+      job = $("#job-input").val().trim();
+      anythingElse = $("#anythingElse-input").val().trim();
+      salary = $("#salaryRange-input").val().trim();
+      console.log(salary);
+      // Code for handling the push
+      database.ref().push({
+        job: job,
+        anythingElse: anythingElse,
+        salary: salary,
+        dateAdded: firebase.database.ServerValue.TIMESTAMP
+      });
+
+    });
+
+    // Firebase watcher + initial loader + order/limit HINT: .on("child_added"
+    database.ref().orderByChild("dateAdded").limitToLast(1).on("child_added", function(snapshot) {
+      // storing the snapshot.val() in a variable for convenience
+      var sv = snapshot.val();
+
+      // Console.loging the last user's data
+      console.log(sv.job);
+      console.log(sv.anythingElse);
+      console.log(sv.salary);
+
+      // Change the HTML to reflect
+      $("#job-display").html(sv.job);
+      $("#anythingElse-display").html(sv.anythingElse);
+      $("#salaryRange-display").html(sv.salary);
+
+      // Handle the errors
+    }, function(errorObject) {
+      console.log("Errors handled: " + errorObject.code);
+    });
+  </script>
+
+</body>
+
 </html>
