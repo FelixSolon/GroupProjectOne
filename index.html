@@ -45,8 +45,16 @@
                 <input class="form-control" id="job-input" type="text">
               </div>
               <div class="form-group">
-                <label for="anythingElse-input">Location:</label>
-                <input class="form-control" id="anythingElse-input" type="text">
+                <label for="address-input">Address:</label>
+                <input class="form-control" id="address-input" type="text">
+              </div>
+              <div class="form-group">
+                <label for="city-state-input">City and State:</label>
+                <input class="form-control" id="city-state-input" type="text">
+              </div>
+              <div class="form-group">
+                <label for="radius-input">Radius in Miles:</label>
+                <input class="form-control" id="radius-input" type="text">
               </div>
               <div class="form-group">
                 <!--<label for="age-input">Salary Range:</label> -->
@@ -95,8 +103,14 @@
             <h3 class="panel-title">Most Recent Job Search</h3>
           </div>
           <div class="panel-body" id="recent-member">
+            <h2>Most Recent Job:</h2>
             <h2 id="job-display"></h2>
-            <h4 id="anythingElse-display"></h4>
+            <h4>Location:</h4>
+            <h4 id="address-display"></h4>
+            <h4 id="city-state-display"></h4>
+            <h4>Radius:</h4>
+            <h4 id="radius-display"></h4>
+            <h4>Salary Range:</h4>
             <h4 id="salaryRange-display"></h4>
           </div>
         </div>
@@ -138,14 +152,19 @@
 
       // Grabbed values from text boxes
       job = $("#job-input").val().trim();
-      anythingElse = $("#anythingElse-input").val().trim();
+      address = $("#address-input").val().trim();
+      cityState = $("#city-state-input").val().trim();
+      radius = $("#radius-input").val().trim();
+      console.log(radius);
       salary = $("#salaryRange-input").val().trim();
       console.log(salary);
       // Code for handling the push
       database.ref().push({
         job: job,
-        anythingElse: anythingElse,
+        address: address,
+        cityState: cityState,
         salary: salary,
+        radius: radius,
         dateAdded: firebase.database.ServerValue.TIMESTAMP
       });
 
@@ -163,8 +182,10 @@
 
       // Change the HTML to reflect
       $("#job-display").html(sv.job);
-      $("#anythingElse-display").html(sv.anythingElse);
+      $("#address-display").html(sv.addressElse);
       $("#salaryRange-display").html(sv.salary);
+      $("#city-state-display").html(sv.cityState);
+      $("#radius-display").html(sv.radius);
 
       // Handle the errors
     }, function(errorObject) {
