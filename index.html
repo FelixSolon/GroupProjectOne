@@ -126,73 +126,10 @@
   <script>
     // ========================================== START CODING BELOW!!
 
-    // Initialize Firebase
-  var config = {
-    apiKey: "AIzaSyD6byBIx9RMcfhESzbA7P95LHhANnW4BhA",
-    authDomain: "zedprojectone.firebaseapp.com",
-    databaseURL: "https://zedprojectone.firebaseio.com",
-    projectId: "zedprojectone",
-    storageBucket: "zedprojectone.appspot.com",
-    messagingSenderId: "954689702432"
-    };
 
-    firebase.initializeApp(config);
-
-    // Create a variable to reference the database.
-    var database = firebase.database();
-
-    // Initial Values
-    var job;
-    var anythingElse;
-    var salary;   //ask about inputting dropdowns
-
-    // Capture Button Click
-    $(document).on("click", "#add-user", function(event) {
-      event.preventDefault();
-
-      // Grabbed values from text boxes
-      job = $("#job-input").val().trim();
-      address = $("#address-input").val().trim();
-      cityState = $("#city-state-input").val().trim();
-      radius = $("#radius-input").val().trim();
-      console.log(radius);
-      salary = $("#salaryRange-input").val().trim();
-      console.log(salary);
-      // Code for handling the push
-      database.ref().push({
-        job: job,
-        address: address,
-        cityState: cityState,
-        salary: salary,
-        radius: radius,
-        dateAdded: firebase.database.ServerValue.TIMESTAMP
-      });
-
-    });
-
-    // Firebase watcher + initial loader + order/limit HINT: .on("child_added"
-    database.ref().orderByChild("dateAdded").limitToLast(1).on("child_added", function(snapshot) {
-      // storing the snapshot.val() in a variable for convenience
-      var sv = snapshot.val();
-
-      // Console.loging the last user's data
-      console.log(sv.job);
-      console.log(sv.anythingElse);
-      console.log(sv.salary);
-
-      // Change the HTML to reflect
-      $("#job-display").html(sv.job);
-      $("#address-display").html(sv.addressElse);
-      $("#salaryRange-display").html(sv.salary);
-      $("#city-state-display").html(sv.cityState);
-      $("#radius-display").html(sv.radius);
-
-      // Handle the errors
-    }, function(errorObject) {
-      console.log("Errors handled: " + errorObject.code);
-    });
   </script>
 
+  <script type="text/javascript" src="js/javascript.js"></script>
 </body>
 
 </html>
