@@ -16,9 +16,11 @@ Sketch of Final Product
 
 APIs to be used
 
-   Glassdoor to get jobs and salaries
-   https://www.glassdoor.com/developer/jobsApiActions.htm
-   Zillow to get real estate listings
-   https://www.zillow.com/howto/api/APIOverview.htm 
+   USAJobs to get job listings and salaries
+   https://data.usajobs.gov/api/
+   Google Maps for apartment searches
 
-Rough Breakdown of Tasks.
+Rough Breakdown of Tasks:
+   Zack: Front End
+   Dwayne: Integrate Google Maps API
+   Eric: Integrate USAJobs API
