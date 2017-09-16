@@ -31,7 +31,7 @@ var GoogleData;
 
 
 
-//Not sure I need three of these, but I'm creating it now so if code diverges it'll be easier to mess with.
+
 //ToDo: Refactor if necessary
 
 
@@ -48,6 +48,10 @@ function runGoogleQuery(googleMapsQueryUrl) {
         initAutocomplete(GoogleData);
     });
 };
+
+/*
+Sets starting location and zoom level
+*/
 function initAutocomplete() {
         var map = new google.maps.Map(document.getElementById('map'), {
           center: {lat: 32.8998, lng: -97.0403},
@@ -63,7 +67,7 @@ function initAutocomplete() {
         map.addListener('bounds_changed', function() {
           searchBox.setBounds(map.getBounds());
         });
-
+console.log(input);
         var markers = [];
         // Listen for the event fired when the user selects a prediction and retrieve
         // more details for that place.
@@ -117,7 +121,7 @@ function initAutocomplete() {
     console.log("This is working")
 
 
-
+ 
 
 //--------------------------------------------------->
 //-----Marker Clustering Documentation--------------->

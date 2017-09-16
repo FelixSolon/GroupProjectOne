@@ -45,7 +45,7 @@ function xmlToJson(xml) {
 var zillowKey = "X1-ZWz1fz8njz1yq3_7sxq3";
 
 //To feed into Ajax and get Zillow stuff
-var zillowQueryUrl = "http://www.zillow.com/webservice/GetSearchResults.htm?zws-id=" + zillowKey + "&address=2114+Bigelow+Ave&citystatezip=Seattle%2C+WA";
+var zillowQueryUrl = "http://www.zillow.com/webservice/GetSearchResults.htm?zws-id=" + zillowKey + "&address=2114+Bigelow+Ave&citystatezip=Seattle%2C+WA"
 
 //start zillow code
 var ZillowData;
@@ -72,5 +72,5 @@ function runZillowQuery(zillowQueryUrl){
  };   
      
 };
-console.log(zillowQueryUrl);
+runZillowQuery(zillowQueryUrl);
 //end zillow code
