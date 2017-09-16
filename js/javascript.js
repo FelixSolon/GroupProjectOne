@@ -161,7 +161,7 @@ function runZillowQuery(zillowQueryUrl) {
   $.ajax({
     url: zillowQueryUrl,
     method: "GET",
-    headers: {'Access-Control-Allow-Origin': "https://google.com"}
+    headers: {"key" : "Access-Control-Allow-Origin"}
   }).done(function(ZillowData){
         console.log("------------------------------------");
         console.log("URL: " + zillowQueryUrl);
@@ -171,6 +171,21 @@ function runZillowQuery(zillowQueryUrl) {
         console.log("------------------------------------");
         console.log(jsonified);
         console.log(jsonified["SearchResults:searchresults"].response.results.result[1].zpid['#text']);
+        var zpidThing = jsonified["SearchResults:searchresults"].response.results.result[1].zpid['#text'];
+        $.ajax({
+          url: "http://www.zillow.com/webservice/GetZestimate.htm?zws-id=X1-ZWz1fz8njz1yq3_7sxq3&zpid=" + zpidThing + "&rentzestimate=true",
+          method: "GET",
+          headers: {"key" : "Access-Control-Allow-Origin"}
+        }).done(function(ZillowZestimateData){
+              console.log("------------------------------------");
+              console.log("ZestimateURL: " + "http://www.zillow.com/webservice/GetZestimate.htm?zws-id=" + zillowKey + "&zpid=" + zpidThing + "&rentzestimate=true");
+              console.log("------------------------------------");
+              console.log(ZillowZestimateData);
+              var jsonified = xmlToJson(ZillowZestimateData);
+              console.log("------------------------------------");
+              console.log(jsonified);
+              //console.log(jsonified["Zestimate:zestimate"].response.zestimate.amount['#text']);
+        });
   });
 };
 
@@ -192,10 +207,13 @@ function runGlassdoorQuery(glassdoorQueryUrl) {
 
   function runOnboardQuery(address1, address2, radius) {
       console.log("This is running, just slow.");
-      var firstAddressLine = address1.replace(/\s/g,'+');
-      var secondAddressLine = address2.replace(/\s/g,'+');
+      var firstAddressLine = address1.replace(/\s/g,'%20');
+      var secondAddressLine = address2.replace(/\s/g,'%20');
+      firstAddressLine = firstAddressLine.replace(/\,/g,'%2C');
+      secondAddressLine = secondAddressLine.replace(/\,/g,'%2C');
       var selectedRadius = radius;
       var onboardQueryUrl = "https://search.onboard-apis.com/propertyapi/v1.0.0/property/address?address1=" + firstAddressLine + "&address2=" + secondAddressLine + "&radius=" + selectedRadius + "&page=1&pagesize=5&propertytype=APARTMENT&orderby=distance"
+      console.log("This is the Onboard URL: " + onboardQueryUrl)
       $.ajax({
               url: onboardQueryUrl,
               type: "GET",
@@ -203,12 +221,15 @@ function runGlassdoorQuery(glassdoorQueryUrl) {
               headers: { "apikey": "12e4d72b8d365ddf02371786955fb155" }
       }).done(function(response) {
           console.log(response);
-          var addressLine1 = response.property[1].address.line1
-          addressLine1 = addressLine1.replace(/\s/g,'-')
-          var addressLine2 = response.property[1].address.line2
-          addressLine2 = addressLine2.replace(/\s/g,'-')
+          var addressLine1 = response.property[1].address.line1;
+          addressLine1 = addressLine1.replace(/\s/g,'-');
+          var addressLine2 = response.property[1].address.line2;
+          addressLine2 = addressLine2.replace(/\s/g,'-');
+          addressLine1 = addressLine1.replace(/\,/g,'%2C');
+          addressLine2 = addressLine2.replace(/\,/g,'%2C');
+          
           console.log("This might work: " + addressLine1 + " " + addressLine2);
-          var zillowQueryUrl = "http://www.zillow.com/webservice/GetSearchResults.htm?zws-id=" + zillowKey + "&address=" + addressLine1 + "&citystatezip=" + addressLine2 + "&rentzestimate=true";
+          var zillowQueryUrl = "https://www.zillow.com/webservice/GetSearchResults.htm?zws-id=" + zillowKey + "&address=" + addressLine1 + "&citystatezip=" + addressLine2;
           console.log("This should have no spaces: " + zillowQueryUrl);
           runZillowQuery(zillowQueryUrl);
           });
