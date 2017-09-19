@@ -22,7 +22,7 @@ var jobTitle=""
 //To feed into Ajax and get Glassdoor stuff
 var glassDoorQueryUrl = "http://api.glassdoor.com/api/api.htm?t.p=193688&t.k=jv7w1oj6pHc&userip=0.0.0.0&useragent=&format=json&v=1&action=employers&city=" + city + "&state=" + state + "&q=" + jobTitle
 
-//To feed into Ajax and get Zillow stuff
+//To feed into Ajax and get Zillow stuff. More just declared here and actually filled in in the eventual function.
 var zillowQueryUrl;
 
 //To feed into Ajax and get Google Maps stuff
@@ -60,23 +60,20 @@ var onboardQueryUrl = "https://search.onboard-apis.com/propertyapi/v1.0.0/proper
       // Grabbed values from text boxes
       job = $("#job-input").val().trim();
       address = $("#address-input").val().trim();
-      console.log("Address: " + address);
       cityState = $("#city-state-input").val().trim();
-      console.log("CityState: " + cityState);
       radius = $("#radius-input").val().trim();
-      console.log(radius);
       salary = $("#salaryRange-input").val().trim();
-      console.log(salary);
       state = $("#state-input").val().trim();
-      console.log(state);
       // Code for handling the push
       database.ref().push({
         job: job,
         address: address,
+        //the cityState variale should get renamed to be more self-commenting, but at this point I just don't want to break things.
         cityState: cityState,
         state: state,
         salary: salary,
         radius: radius,
+        //the dateAdded is probably unnecessary for what we're doing, but it doesn't really hurt anything and means we can order stuff later if necessary.
         dateAdded: firebase.database.ServerValue.TIMESTAMP
       });
       runUSAJobsQuery(job, cityState, state, salary);
@@ -105,8 +102,11 @@ var onboardQueryUrl = "https://search.onboard-apis.com/propertyapi/v1.0.0/proper
 var GoogleData;
 var ZillowData;
 var GlassdoorData;
+var usaJobsData
 
 // Changes XML to JSON to make it reasonable to work with Zillow
+//stolen directly from Stack Overflow
+//I'm not good enough to code that myself.
 function xmlToJson(xml) {
     
     // Create the return object
@@ -131,6 +131,7 @@ function xmlToJson(xml) {
             var item = xml.childNodes.item(i);
             var nodeName = item.nodeName;
             if (typeof(obj[nodeName]) == "undefined") {
+                //TIL you can call a function inside of itself. -Eric
                 obj[nodeName] = xmlToJson(item);
             } else {
                 if (typeof(obj[nodeName].push) == "undefined") {
@@ -164,7 +165,7 @@ function runGoogleQuery(googleMapsQueryUrl) {
 };
 
 function runZillowQuery(zillowQueryUrl) {
-
+  //Pull data for properties in a radius
   $.ajax({
     url: zillowQueryUrl,
     method: "GET",
@@ -174,14 +175,20 @@ function runZillowQuery(zillowQueryUrl) {
         console.log("URL: " + zillowQueryUrl);
         console.log("------------------------------------");
         console.log(ZillowData);
+        //ToDo: Come up with a better variable name.
         var jsonified = xmlToJson(ZillowData);
         console.log("------------------------------------");
         console.log(jsonified);
+        //TIL you can access object key-value pairs by putting a string into an array box. Because that makes sense.
+        //But special characters make selecting zpid.#text or response.SearchResults:searchresults difficult.
         console.log(jsonified["SearchResults:searchresults"].response.results.result[1].zpid['#text']);
+        //ToDo: Come up with better variable names.
+        //This pulls Zillow's proprietary ID for a property so I can feed it into the next API call to get an actual rent estimate.
         var zpidThing = jsonified["SearchResults:searchresults"].response.results.result[1].zpid['#text'];
         $.ajax({
           url: "http://www.zillow.com/webservice/GetZestimate.htm?zws-id=X1-ZWz1fz8njz1yq3_7sxq3&zpid=" + zpidThing + "&rentzestimate=true",
           method: "GET",
+          //I don't think this bit actually works.
           headers: {"key" : "Access-Control-Allow-Origin"}
         }).done(function(ZillowZestimateData){
               console.log("------------------------------------");
@@ -197,9 +204,12 @@ function runZillowQuery(zillowQueryUrl) {
 };
 
 function runGlassdoorQuery(address2, state, job) {
+  //Regular expression finds all spaces and replaces them with %20, which is the URL version of a space.
   var secondAddressLine = address2.replace(/\s/g,'%20');
+  //Regular expression finds all commas and replaces them with %2C, which is the URL version of a comma.
   var city = secondAddressLine.replace(/\,/g,'%2C'); 
   console.log("city: " + city);
+  //Redefining variables are probably unnecessary, but it means I don't screw up the global variable as I do things.
   var selectedState = state;
   console.log("Selected State: " + state);
   var jobTitle = job;
@@ -216,6 +226,9 @@ function runGlassdoorQuery(address2, state, job) {
 
         console.log(GlassdoorData);
         console.log("------------------------------------");
+        //Throw Employer stuff into a little panel and display on the sidebar.
+        //This is the ugly way. The USA Jobs query has it in the more Best Practice way of creating Divs and such with jQuery, but this is functional.
+        //Though even I judge me for this.
         for (var i = 0; i < GlassdoorData.response.employers.length; i++) {
           $("#found-jobs").append('<div class="panel panel-primary"><div class="panel-heading"><h3 class="panel-title">' + GlassdoorData.response.employers[i].name + '</h3></div><div class="panel-body job" id="job' + i + '"><img src="' + GlassdoorData.response.employers[i].squareLogo + '" height=50px class="logoImage"><h5>Employee Rating: ' + GlassdoorData.response.employers[i].ratingDescription + '<h5>Recommend Rating: ' + GlassdoorData.response.employers[i].recommendToFriendRating + '/100</h5></div></div></div>');
         }
@@ -224,6 +237,9 @@ function runGlassdoorQuery(address2, state, job) {
 
   function runOnboardQuery(address1, address2, radius) {
       console.log("This is running, just slow.");
+      //RegEx things to URLify them.
+      //Because it's more efficient than running a for loop through every input character and changing them if necessary.
+      //Though I guess that's technically what I'm doing anyhow, but it's less code to write this way.
       var firstAddressLine = address1.replace(/\s/g,'%20');
       var secondAddressLine = address2.replace(/\s/g,'%20');
       firstAddressLine = firstAddressLine.replace(/\,/g,'%2C');
@@ -235,6 +251,8 @@ function runGlassdoorQuery(address2, state, job) {
               url: onboardQueryUrl,
               type: "GET",
               dataType: "json",
+              //Sssh, don't tell anyone the API key.
+              //ToDo: Store this in Firebase and retrieve it later to hide it from people inspecting the website.
               headers: { "apikey": "12e4d72b8d365ddf02371786955fb155" }
       }).done(function(response) {
           console.log(response);
@@ -252,6 +270,7 @@ function runGlassdoorQuery(address2, state, job) {
           });
   };
 
+//Because Glassdoor isn't working as I need it to. And also I'm too cheap to pay for the access to the actual APIs we'd need to do what we want with them.
   function runUSAJobsQuery (jobTitle, city, state, minSalary){
     var title = jobTitle;
     var selectedCity = city;
@@ -265,6 +284,7 @@ function runGlassdoorQuery(address2, state, job) {
               headers: { "Authorization-Key": "nweEhXPjqsflfJtnqIjGim20VIaTtP0ReR4+f9jM2Jk=" }
       }).done(function(response) {
         console.log(response);
+        //Clear out the "Found Jobs" panel each search before adding new stuff in.
         $("#found-jobs").empty();
         for (var i = 0; i < response.SearchResult.SearchResultItems.length; i++) {
         var div = $("<div>")
@@ -291,6 +311,11 @@ function runGlassdoorQuery(address2, state, job) {
         panelBody.append(applyText);
         
         $("#found-jobs").append(div);
+
       }
+
+      if (response.SearchResult.SearchResultCount == "0"){
+          $("#alertModal").modal();
+        }
   });
 };
