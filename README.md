@@ -31,6 +31,9 @@ Eric:
 
 Zack:
 * Lorem
+* Landing Page
+* Background
+* Canvas/HTML5 
 
 Dwayne:
 * Responsable for finding and initiating the google maps api, and identifing the html elements to be used in the project.
