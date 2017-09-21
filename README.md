@@ -33,7 +33,8 @@ Zack:
 * Lorem
 
 Dwayne:
-* Ipsum
+* Responsable for finding and initiating the google maps api, and identifing the html elements to be used in the project.
+The google maps search has multiple options to choose from. finding the option that works for us was a bit of a challenge.
 
 ### Challenges
 * Our initial APIs wound up being less than ideal for our purposes. The Glassdoor API doesn't allow pulling job listings without becoming a Glassdoor Partner, which was beyond the time and resources we had for this project. Eventually, we switched to a different API to allow us to provide a proof of concept.
