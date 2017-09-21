@@ -14,7 +14,7 @@ ZED: Migrate allows jub hunters to search for jobs and apartments in other citie
 
 ### Motivation
 
-Job hunting is one of the the more painful processes of modern life. Apartment hunting is little better. ZED: Migrate seeks to combine the two to reduce at least one of the pain points facing people looking to pick up their roots and work in a new town.
+Job hunting is one of the the more painful processes of modern life. Apartment hunting is little better. ZED: Migrate seeks to combine the two to reduce the pain points facing people looking to pick up their roots and work in a new town.
 
 ### Results
 Due to technical and access limitations of the APIs available, we were forced to reduce the scope of the project from one that would pull down Glassdoor's job listings and combine them with Zillow's rent estimates, to one that accesses the USAJobs API to find state and federal jobs in a chosen city, and combined that with Google's Maps API to show apartments available.
