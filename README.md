@@ -57,6 +57,7 @@ Must utilize at least one new library or technology we haven't discussed
 * Used Postman to format API calls without having to change the Javascript and reload a webpage.
 * Used regular expressions to do user input validation.
 * Used modals to give user feedback in the event of errors.
+* Incorporated HTML5 for graphical background elements.
 
 Must have a polished frontend / UI
 
