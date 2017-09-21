@@ -105,13 +105,26 @@
       #target {
         width: 345px;
       }
+       #myCanvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 200%;
+        z-index: -1;
+      }
+      .jumbotron {
+        background: rgb(200, 54, 54);
+        background: rgba(114, 0, 0, 0.5); 
+      }
     </style>
   </head>
   <body>
+        <canvas id="myCanvas"></canvas>
     <br>
 
     <!-- Jumbotron -->
-    <div class="jumbotron">
+    <div class="jumbotron" style="color: white; border-color: white;>
       <h1 class="text-center">ZED: Migrating Made Easy</h1>
       <h3 class="text-center">Search a job. Find a home. Make the move.</h3>
     </div>
@@ -318,6 +331,7 @@
     <script src="https://code.jquery.com/jquery.js"></script>
     <!-- Bootstrap Javascript, because Modals are nice.-->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        <script src="./js/landing.js"></script>
     <script type="text/javascript" src="js/javascript.js"></script>
   </body>
 </html>
