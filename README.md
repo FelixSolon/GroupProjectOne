@@ -30,10 +30,10 @@ Eric:
 * I was personally responsible for finding the Job Hunt API and incorporating it into the website, as well as getting the Firebase storage working to hold the API keys so they weren't publically visible on our website and incorporating the Google Maps search into the HTML of the website.
 
 Zack:
-* 
+* Lorem
 
 Dwayne:
-* 
+* Ipsum
 
 ### Challenges
 * Our initial APIs wound up being less than ideal for our purposes. The Glassdoor API doesn't allow pulling job listings without becoming a Glassdoor Partner, which was beyond the time and resources we had for this project. Eventually, we switched to a different API to allow us to provide a proof of concept.
