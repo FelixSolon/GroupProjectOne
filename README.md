@@ -38,27 +38,37 @@ Due to technical and access limitations of the APIs available, we were forced to
 * Figure out the Zillow CORS problems, or host an actual server such that CORS works correctly.
 
 ### Requirements:
-* Must use at least two APIs
-..* Google Maps and USAJobs
-* Must use AJAX to pull data
-..* Used with both APIs
-* Must utilize at least one new library or technology we haven't discussed
-..* Used Postman to format API calls without having to change the Javascript and reload a webpage.
-..* Used regular expressions to do user input validation.
-..* Used modals to give user feedback in the event of errors.
-* Must have a polished frontend / UI
-* Must meed good quality coding standards
-* Must not use alerts, confirms, or prompts
-..* Modals were used in place of alerts.
-..* A form was used in place of prompts
-* Must have some sort of repeating element
-..* Jobs listings pop up in repeating panels.
-..* Bootstrap columns used
-* Must use Bootstrap or alternative CSS framework
-..* Bootstrap used
-* Must be Deployed (Github Pages)
-..* Deployed to Github Pages
-* Must have User Input Validation
-..* Done by way of regular expressions to ensure only valid characters are entered in the job/address/radius boxes.
-* Utilize Firebase for persistent data storage
-..* Used to hold our API keys so they aren't exposed on the website.
+Must use at least two APIs
+* Google Maps and USAJobs
+
+Must use AJAX to pull data
+* Used with both APIs
+
+Must utilize at least one new library or technology we haven't discussed
+* Used Postman to format API calls without having to change the Javascript and reload a webpage.
+* Used regular expressions to do user input validation.
+* Used modals to give user feedback in the event of errors.
+
+Must have a polished frontend / UI
+
+Must meed good quality coding standards
+
+Must not use alerts, confirms, or prompts
+* Modals were used in place of alerts.
+* A form was used in place of prompts
+
+Must have some sort of repeating element
+* Jobs listings pop up in repeating panels.
+* Bootstrap columns used.
+
+Must use Bootstrap or alternative CSS framework
+* Bootstrap used.
+
+Must be Deployed (Github Pages)
+* Deployed to Github Pages.
+
+Must have User Input Validation
+* Done by way of regular expressions to ensure only valid characters are entered in the job/address/radius boxes.
+
+Utilize Firebase for persistent data storage
+* Used to hold our API keys so they aren't exposed on the website.
