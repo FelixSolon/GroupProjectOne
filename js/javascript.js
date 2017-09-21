@@ -16,150 +16,130 @@ var config = {
     console.log(database.ref())
     // Initial Values
     var job;
-    var anythingElse;
     var salary;   //ask about inputting dropdowns
 
     
-
-    // Firebase watcher + initial loader + order/limit HINT: .on("child_added"
-    database.ref().orderByChild("dateAdded").limitToLast(1).on("child_added", function(snapshot) {
-      // storing the snapshot.val() in a variable for convenience
-      var sv = snapshot.val();
-
-      // Console.loging the last user's data
-      //console.log(sv.job);
-      //console.log(sv.anythingElse);
-      //console.log(sv.salary);
-
-      // Change the HTML to reflect
-      $("#job-display").html(sv.job);
-      $("#address-display").html(sv.addressElse);
-      $("#salaryRange-display").html(sv.salary);
-      //sets city and state to google maps search
-      //$("#city-state-display").html(sv.cityState);
-      //$("#pac-input").attr("value",sv.cityState);
-      $("#radius-display").html(sv.radius);
-
-      // Handle the errors
-    }, function(errorObject) {
-      console.log("Errors handled: " + errorObject.code);
-    });
-
-
+// Firebase watcher + initial loader + order/limit HINT: .on("child_added"
+database.ref().orderByChild("dateAdded").limitToLast(1).on("child_added", function(snapshot) {
+  // storing the snapshot.val() in a variable for convenience
+  var sv = snapshot.val();
+  // Console.loging the last user's data
+  //console.log(sv.job);
+  //console.log(sv.salary);
+  // Change the HTML to reflect
+  $("#job-display").html(sv.job);
+  $("#address-display").html(sv.addressElse);
+  $("#salaryRange-display").html(sv.salary);
+  //sets city and state to google maps search
+  //$("#city-state-display").html(sv.cityState);
+  //$("#pac-input").attr("value",sv.cityState);
+  $("#radius-display").html(sv.radius);
+  // Handle the errors
+}, function(errorObject) {
+    console.log("Errors handled: " + errorObject.code);
+});
+//Declared globally to mess with later.
 var city="";
 var state="";
 var jobTitle=""
-//To feed into Ajax and get Glassdoor stuff
-var glassDoorQueryUrl = "http://api.glassdoor.com/api/api.htm?t.p=193688&t.k=jv7w1oj6pHc&userip=0.0.0.0&useragent=&format=json&v=1&action=employers&city=" + city + "&state=" + state + "&q=" + jobTitle
+//To feed into Ajax and get Glassdoor stuff. Currently irrelevant, saved in case.
+//var glassDoorQueryUrl = "http://api.glassdoor.com/api/api.htm?t.p=193688&t.k=jv7w1oj6pHc&userip=0.0.0.0&useragent=&format=json&v=1&action=employers&city=" + city + "&state=" + state + "&q=" + jobTitle
 
-//To feed into Ajax and get Zillow stuff. More just declared here and actually filled in in the eventual function.
-var zillowQueryUrl;
+//To feed into Ajax and get Zillow stuff. More just declared here and actually filled in in the eventual function. Currently irrelevant, saved just in case.
+//var zillowQueryUrl;
+//Declared globally to play with later.
+var address1;
+var address2;
+var radius;
+var job;
+var salary;
 
-//To feed into Ajax and get Google Maps stuff
+// Capture Button Click
+$(document).on("click", "#add-user", function(event) {
+  event.preventDefault();
+  input=$("#pac-input");
+  // Grabbed values from text boxes
+  job = $("#job-input").val().trim();
+  address = $("#address-input").val().trim();
+  //cityState = $("#geocomplete").val().trim();
+  radius = $("#radius-input").val().trim();
+  salary = $("#salaryRange-input").val().trim();
+  //state = $("#state-input").val().trim();
+  // Code for handling the push
+  input.value="apartments near " + address;
+  google.maps.event.trigger(input, 'focus');
+  google.maps.event.trigger(input, 'keydown', {
+      keyCode: 13
+  });
+  //uses regular expressions to make sure that all inputs are made up of 0-9, a-Z, hypen, or space
+  //pops up a modal yelling at the user if it does
+  //Actually modified from stack overflow, not just stolen, as it was triggering on Commas, too.
+  //Yes, I learned how to use regular expressions for this stupid project.
+  if(/^[a-zA-Z0-9- ,]*$/.test(job) == false) {
+    $("#validationModal").modal();
+    return false;
+  }
+  if(/^[a-zA-Z0-9- ,]*$/.test(address) == false) {
+    $("#validationModal").modal();
+    return false;
+  }
+  if(/^[a-zA-Z0-9- ,]*$/.test(radius) == false) {
+    $("#validationModal").modal();
+    return false;
+  }
+database.ref().push({
+  job: job,
+  address: address,
+    //the cityState variale should get renamed ,to be more self-commenting, but at this point I just don't want to break things.
+    //cityState: cityState,
+    //state: state,
+    salary: salary,
+    radius: radius,
+    //the dateAdded is probably unnecessary for what we're doing, but it doesn't really hurt anything and means we can order stuff later if necessary.
+    dateAdded: firebase.database.ServerValue.TIMESTAMP,
+    usaJobsKey:usaJobsKey,
+    zillowKey:zillowKey,
+    onboardKey:onboardKey,
+    googleMapsKey:googleMapsKey,
+    glassDoorKey:glassDoorKey
+  });   
+  var onboardQueryUrl = "https://search.onboard-apis.com/propertyapi/v1.0.0/property/address?address1=" + address1 + "&address2=" + address2 + "&radius=" + radius + "&page=1&pagesize=5"
+  var googleMapsQueryUrl = "https://maps.googleapis.com/maps/api/js?key=" + googleMapsKey + "&libraries=places";
+  runUSAJobsQuery(job, address, salary);
+  runGoogleQuery(googleMapsQueryUrl)
+  console.log("Things are happening")
+  console.log("Address: " + address)
+  console.log($("#pac-input"));
+});
 
-var address1 = "2312 Warrington Avenue";
-var address2 = "Flower Mound, TX";
-var radius = 0;
-
-   
-    var job;
-    var anythingElse;
-    var salary;   //ask about inputting dropdowns
-
-    // Capture Button Click
-    $(document).on("click", "#add-user", function(event) {
-      event.preventDefault();
-      input=$("#pac-input");
-      // Grabbed values from text boxes
-      job = $("#job-input").val().trim();
-      address = $("#address-input").val().trim();
-      //cityState = $("#geocomplete").val().trim();
-      radius = $("#radius-input").val().trim();
-      salary = $("#salaryRange-input").val().trim();
-      //state = $("#state-input").val().trim();
-      // Code for handling the push
-      input.value="apartments near " + address;
-      google.maps.event.trigger(input, 'focus');
-      google.maps.event.trigger(input, 'keydown', {
-          keyCode: 13
-      });
-      //uses regular expressions to make sure that all inputs are made up of 0-9, a-Z, hypen, or space
-      //pops up a modal yelling at the user if it does
-      //Actually modified from stack overflow, not just stolen, as it was triggering on Commas, too.
-      //Yes, I learned how to use regular expressions for this stupid project.
-      if(/^[a-zA-Z0-9- ,]*$/.test(job) == false) {
-        $("#validationModal").modal();
-        return false;
-      }
-      if(/^[a-zA-Z0-9- ,]*$/.test(address) == false) {
-        $("#validationModal").modal();
-        return false;
-      }
-      if(/^[a-zA-Z0-9- ,]*$/.test(radius) == false) {
-        $("#validationModal").modal();
-        return false;
-      }
-
-      database.ref().push({
-        job: job,
-        address: address,
-        //the cityState variale should get renamed ,to be more self-commenting, but at this point I just don't want to break things.
-        //cityState: cityState,
-        //state: state,
-        salary: salary,
-        radius: radius,
-        //the dateAdded is probably unnecessary for what we're doing, but it doesn't really hurt anything and means we can order stuff later if necessary.
-        dateAdded: firebase.database.ServerValue.TIMESTAMP,
-        usaJobsKey:usaJobsKey,
-        zillowKey:zillowKey,
-        onboardKey:onboardKey,
-        googleMapsKey:googleMapsKey,
-        glassDoorKey:glassDoorKey
-      });
-      
-      var onboardQueryUrl = "https://search.onboard-apis.com/propertyapi/v1.0.0/property/address?address1=" + address1 + "&address2=" + address2 + "&radius=" + radius + "&page=1&pagesize=5"
-      var googleMapsQueryUrl = "https://maps.googleapis.com/maps/api/js?key=" + googleMapsKey + "&libraries=places";
-      console.log("Pleeeease" + googleMapsKey)
-      runUSAJobsQuery(job, address, salary);
-      runGoogleQuery(googleMapsQueryUrl)
-      console.log("Things are happening")
-      console.log("Address: " + address)
-      console.log($("#pac-input"));
-
-    });
-
-    //before
+//More global variables.
 var googleMapsKey;
 var glassDoorKey;
 var onboardKey;
 var usaJobsKey;
 var zillowKey;
-    // Firebase watcher + initial loader + order/limit HINT: .on("child_added"
-    database.ref().orderByChild("dateAdded").limitToLast(1).on("child_added", function(snapshot) {
-      // storing the snapshot.val() in a variable for convenience
-      var sv = snapshot.val();
-
-      // Console.loging the last user's data
-
-      // Change the HTML to reflect
-      $("#job-display").html(sv.job);
-      $("#address-display").html(sv.address);
-      $("#salaryRange-display").html(sv.salary);
-      //$("#city-state-display").html(sv.cityState);
-      $("#radius-display").html(sv.radius + " miles");
-      console.log("Google Maps Key: " + sv.googleMapsKey);
-      console.log("Onboard Key: " + sv.onboardKey);
-      googleMapsKey=sv.googleMapsKey;
-      onboardKey=sv.onboardKey;
-      glassDoorKey=sv.glassDoorKey;
-      usaJobsKey=sv.usaJobsKey;
-      zillowKey=sv.zillowKey;
-      console.log("After Z " + zillowKey);
-      // Handle the errors
-    }, function(errorObject) {
-      console.log("Errors handled: " + errorObject.code);
-    });
-console.log("Please " +   zillowKey);
+// Firebase watcher + initial loader + order/limit HINT: .on("child_added"
+database.ref().orderByChild("dateAdded").limitToLast(1).on("child_added", function(snapshot) {
+  // storing the snapshot.val() in a variable for convenience
+  var sv = snapshot.val();
+  // Console.loging the last user's data
+  // Change the HTML to reflect
+  //Currently unused, as we found a better use for Firebase
+  //$("#job-display").html(sv.job);
+  //$("#address-display").html(sv.address);
+  //$("#salaryRange-display").html(sv.salary);
+  //$("#city-state-display").html(sv.cityState);
+  //$("#radius-display").html(sv.radius + " miles");
+  //Pull keys down from Firebase so that we can use them without exposing them.
+  googleMapsKey=sv.googleMapsKey;
+  onboardKey=sv.onboardKey;
+  glassDoorKey=sv.glassDoorKey;
+  usaJobsKey=sv.usaJobsKey;
+  zillowKey=sv.zillowKey;
+  // Handle the errors
+}, function(errorObject) {
+    console.log("Errors handled: " + errorObject.code);
+});
 
 //make global variables to modify later.
 var GoogleData;
@@ -170,7 +150,8 @@ var usaJobsData
 // Changes XML to JSON to make it reasonable to work with Zillow
 //stolen directly from Stack Overflow
 //I'm not good enough to code that myself.
-function xmlToJson(xml) {
+//Currently unused as we're not using Zillow.
+/*function xmlToJson(xml) {
     
     // Create the return object
     var obj = {};
@@ -207,12 +188,14 @@ function xmlToJson(xml) {
         }
     }
     return obj;
-};  
+};  */
 
 //Not sure I need four of these, but I'm creating it now so if code diverges it'll be easier to mess with.
 //ToDo: Refactor if necessary
 
-function runZillowQuery(zillowQueryUrl) {
+//Currently unused, saved in case we use later.
+//Because this was a pain to fix.
+/*function runZillowQuery(zillowQueryUrl) {
   //Pull data for properties in a radius
   $.ajax({
     url: zillowQueryUrl,
@@ -249,9 +232,11 @@ function runZillowQuery(zillowQueryUrl) {
               //console.log(jsonified["Zestimate:zestimate"].response.zestimate.amount['#text']);
         });
   });
-};
+};*/
 
-function runGlassdoorQuery(address2, state, job) {
+
+//Leftover code, just in case we ever go back to Glassdoor this can be recycled
+/*function runGlassdoorQuery(address2, state, job) {
   //Regular expression finds all spaces and replaces them with %20, which is the URL version of a space.
   var secondAddressLine = address2.replace(/\s/g,'%20');
   //Regular expression finds all commas and replaces them with %2C, which is the URL version of a comma.
@@ -281,9 +266,9 @@ function runGlassdoorQuery(address2, state, job) {
           $("#found-jobs").append('<div class="panel panel-primary"><div class="panel-heading"><h3 class="panel-title">' + GlassdoorData.response.employers[i].name + '</h3></div><div class="panel-body job" id="job' + i + '"><img src="' + GlassdoorData.response.employers[i].squareLogo + '" height=50px class="logoImage"><h5>Employee Rating: ' + GlassdoorData.response.employers[i].ratingDescription + '<h5>Recommend Rating: ' + GlassdoorData.response.employers[i].recommendToFriendRating + '/100</h5></div></div></div>');
         }
   });
-};
-
-  function runOnboardQuery(address1, address2, radius) {
+};*/
+  //Leftover code from a previous API method, just in case we go back.
+  /*function runOnboardQuery(address1, address2, radius) {
       console.log("This is running, just slow.");
       //RegEx things to URLify them.
       //Because it's more efficient than running a for loop through every input character and changing them if necessary.
@@ -299,9 +284,7 @@ function runGlassdoorQuery(address2, state, job) {
               url: onboardQueryUrl,
               type: "GET",
               dataType: "json",
-              //Sssh, don't tell anyone the API key.
-              //ToDo: Store this in Firebase and retrieve it later to hide it from people inspecting the website.
-              headers: { "apikey": "12e4d72b8d365ddf02371786955fb155" }
+              headers: { "apikey": onboardKey }
       }).done(function(response) {
           console.log(response);
           var addressLine1 = response.property[1].address.line1;
@@ -310,24 +293,23 @@ function runGlassdoorQuery(address2, state, job) {
           addressLine2 = addressLine2.replace(/\s/g,'-');
           addressLine1 = addressLine1.replace(/\,/g,'%2C');
           addressLine2 = addressLine2.replace(/\,/g,'%2C');
-          
-          console.log("This might work: " + addressLine1 + " " + addressLine2);
           var zillowQueryUrl = "https://www.zillow.com/webservice/GetSearchResults.htm?zws-id=" + zillowKey + "&address=" + addressLine1 + "&citystatezip=" + addressLine2;
-          console.log("This should have no spaces: " + zillowQueryUrl);
           runZillowQuery(zillowQueryUrl);
           });
-  };
+  };*/
+
+//Eventually to be used to get lat and longitude from an address and feed it into the map.
+
 
 function runGoogleQuery(googleMapsQueryUrl) {
         
   $.ajax({
-
     url: googleMapsQueryUrl,
     method: "GET",
     dataType: 'jsonp'
   }).done(function(GoogleData){
-        initAutocomplete(GoogleData);
-    });
+        initAutocomplete();
+  });
 };
 function initAutocomplete() {
         console.log("The google thing is working")
@@ -451,3 +433,14 @@ function initAutocomplete() {
   });
 
 };
+
+function googleGeoLocate(address) {
+  $.ajax({
+    url: googleMapsQueryUrl,
+    method: "GET",
+    dataType: "json"
+  }).done(function(Data){
+    console.log(Data)
+  });
+}
+googleGeoLocate("Dallas, TX");
