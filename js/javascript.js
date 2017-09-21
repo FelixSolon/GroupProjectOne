@@ -299,7 +299,17 @@ var usaJobsData
   };*/
 
 //Eventually to be used to get lat and longitude from an address and feed it into the map.
-
+//Currently non-functional.
+/*function googleGeoLocate(address) {
+  $.ajax({
+    url: "https://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&key=" + googleMapsKey,
+    method: "GET",
+    dataType: "json"
+  }).done(function(Data){
+    console.log(Data)
+  });
+}
+googleGeoLocate("Dallas, TX");*/
 
 function runGoogleQuery(googleMapsQueryUrl) {
         
@@ -433,14 +443,3 @@ function initAutocomplete() {
   });
 
 };
-
-function googleGeoLocate(address) {
-  $.ajax({
-    url: googleMapsQueryUrl,
-    method: "GET",
-    dataType: "json"
-  }).done(function(Data){
-    console.log(Data)
-  });
-}
-googleGeoLocate("Dallas, TX");
