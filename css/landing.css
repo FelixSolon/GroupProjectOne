@@ -1,0 +1,59 @@
+
+/*Content on Home Page*/
+body {
+  overflow: hidden;
+}
+
+h1 {
+    position: absolute;
+    top: 7px;
+    left: 45%;
+    color: white;
+    font-family: 'Indie Flower', cursive;
+    font-size: 135px;
+}
+
+h2 {
+    position: absolute;
+    top: 225px;
+    left: 37%;
+    color: white;
+    font-family: 'Lobster', cursive;
+    font-size: 48px;
+}
+
+button {
+  text-align: center;
+  font-size: 38px;
+  border-color: white;
+  background-color: transparent;
+  background-repeat: none;
+  color:white;
+  position: absolute;
+  top: 350px;
+  left: 44%;
+  border-radius: 25px;
+  font-family: 'Shadows Into Light', cursive;
+}
+
+button:hover {
+  text-align: center;
+  color: black;
+  background-color: #1F64BF;
+  position: absolute;
+  top: 43%;
+  left: 44%;
+  border-radius: 25px;
+}
+
+/*  footer all pages*/
+.footer {
+  position: fixed;
+  bottom: 0px;
+  width: 100%;
+  margin: 0;
+  padding: 1rem;
+  opacity: 80%;
+  text-align: center;
+  color: #777777;
+}
