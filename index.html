@@ -1,24 +1,106 @@
 <!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Places Searchbox</title>
+    <link rel="stylesheet" href="css/Maps.css">
+<link rel="stylesheet" href="css/style.css">
 
-<html lang="en-us">
+<!-- Latest compiled and minified CSS -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+    </script>
+<script src="https://www.gstatic.com/firebasejs/4.3.1/firebase.js"></script>
 
-<head>
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 300px;
+        width: 100%;
+        margin: 0;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #description {
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+      }
 
-  <meta charset="UTF-8">
-  <title>Migrate</title>
+      #infowindow-content .title {
+        font-weight: bold;
+      }
 
-  <!-- Bootstrap -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+      #infowindow-content {
+        display: none;
+      }
 
-  <!-- LINK TO FIREBASE GOES HERE -->
-  <script src="https://www.gstatic.com/firebasejs/4.3.1/firebase.js"></script>
+      #map #infowindow-content {
+        display: inline;
+      }
 
-</head>
+      .pac-card {
+        margin: 10px 10px 0 0;
+        border-radius: 2px 0 0 2px;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        outline: none;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        background-color: #fff;
+        font-family: Roboto;
+      }
 
-<body>
+      #pac-container {
+        padding-bottom: 12px;
+        margin-right: 12px;
+      }
 
-  <div class="container">
+      .pac-controls {
+        display: inline-block;
+        padding: 5px 11px;
+      }
 
+      .pac-controls label {
+        font-family: Roboto;
+        font-size: 13px;
+        font-weight: 300;
+      }
+
+      #pac-input {
+        background-color: #fff;
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+        margin-left: 12px;
+        padding: 0 11px 0 13px;
+        text-overflow: ellipsis;
+        width: 400px;
+      }
+
+      #pac-input:focus {
+        border-color: #4d90fe;
+      }
+
+      #title {
+        color: #fff;
+        background-color: #4d90fe;
+        font-size: 25px;
+        font-weight: 500;
+        padding: 6px 12px;
+      }
+      #target {
+        width: 345px;
+      }
+    </style>
+  </head>
+  <body>
     <br>
 
     <!-- Jumbotron -->
@@ -26,36 +108,31 @@
       <h1 class="text-center">ZED: Migrating Made Easy</h1>
       <h3 class="text-center">Search a job. Find a home. Make the move.</h3>
     </div>
-
-    <div class="row">
-
-      <!-- Sign-Up Panel-->
+    <div class="container">
       <div class="col-md-6">
         <div class="panel panel-default">
           <div class="panel-heading">
             <h3 class="panel-title">Your Future Awaits!</h3>
           </div>
           <div class="panel-body">
-
             <!-- Sign-up Form (note the various input "types")-->
-
             <form role="form">
               <div class="form-group">
-                <label for="job-input">Keyword:</label>
-                <input class="form-control" id="job-input" type="text" value="ex: Information Technology">
+                <label for="job-input">Job Title or Keyword:</label>
+                <input class="form-control" id="job-input" type="text" placeholder="ex: IT Specialist, food">
               </div>
-              <div class="form-group">
+              <!-- <div class="form-group">
                 <label for="address-input">Address:</label>
                 <input class="form-control" id="address-input" type="text">
-              </div>
-              <div class="row">
-                <div class="col-md-9">
-                  <div class="form-group">
-                    <label for="city-state-input">City:</label>
-                    <input class="form-control" id="city-state-input" type="text">
+              </div> -->
+              <div class="row"}>
+                <div class="col-md-12">
+                  <div class="form-group" id="addressForm">
+                    <label for="city-state-input">Address:</label>
+                    <input class="form-control" id="address-input" type="text" placeholder="Type in an address" size="90">
                   </div>
                 </div>
-                <div class="col-md-3">
+                <!-- <div class="col-md-3">
                   <div class="form-group">
                     <label for="salaryRange-input">Select State:</label>
                     <select class="form-control" id="state-input">
@@ -112,7 +189,7 @@
                       <option>WY</option>
                     </select>
                   </div>
-                </div>
+                </div> -->
               </div>
               <div class="form-group">
                 <label for="radius-input">Radius in Miles:</label>
@@ -148,54 +225,19 @@
                       <li>$300,000+</li>
                     </ul>
                   </div> -->
-                </div>
+              </div>
 
                 <!-- input class="form-control" id="age-input" type="number"> -->
               
-              <button class="btn btn-default   pull-right" id="add-user" type="submit">Submit</button>
+              <button class="btn btn-default pull-right" id="add-user" type="submit">Submit</button>
             </form>
-
-            </div>
           </div>
-
         </div>
+      </div>
 
       
 
       <!-- Most Recent Member Panel-->
-      <div class="col-lg-6">
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h3 class="panel-title">Most Recent Job Search</h3>
-          </div>
-          <div class="panel-body" id="recent-member">
-            <h2>Most Recent Job:</h2>
-            <h2 id="job-display"></h2>
-            <h4>Location:</h4>
-            <h4 id="address-display"></h4>
-            <h4 id="city-state-display"></h4>
-            <h4>Radius:</h4>
-            <h4 id="radius-display"></h4>
-            <h4>Salary Range:</h4>
-            <h4 id="salaryRange-display"></h4>
-          </div>
-        </div>
-      </div> 
-    </div>
-    <div class="row">
-      <div class="col-md-6">
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h3 class="panel-title">
-              Jobs Found:
-            </h3>
-          </div>
-          <div class="panel-body" id="found-jobs">
-          
-          </div>
-
-        </div>
-      </div>
       <div class="col-md-6">
         <div class="panel panel-default">
           <div class="panel-heading">
@@ -203,26 +245,112 @@
               Apartments Found:
             </h3>
           </div>
-          <div class="panel-body" id="found-jobs">
-          
+          <div class="panel-body" id="found-apartments">
+            <input id="pac-input" class="controls" type="text" value="Apartments">
+            <div id="map"></div>
+          </div>
+        </div>  
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">
+                Jobs Found:
+              </h3>
+            </div>
+            <div class="panel-body" id="found-jobs">
+            
+            </div>
+
           </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
+    <script>
+      // This example adds a search box to a map, using the Google Place Autocomplete
+      // feature. People can enter geographical searches. The search box will return a
+      // pick list containing a mix of places and predicted search terms.
 
-  <!-- jQuery -->
-  <script src="https://code.jquery.com/jquery.js"></script>
+      // This example requires the Places library. Include the libraries=places
+      // parameter when you first load the API. For example:
+      // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
 
-  <!-- Script -->
-  <script>
-    // ========================================== START CODING BELOW!!
+      function initAutocomplete() {
+        var map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 32.797480, lng: -96.790443},
+          zoom: 10,
+          mapTypeId: 'roadmap'
+        });
 
+        // Create the search box and link it to the UI element.
+        var input = document.getElementById('pac-input');
+        var searchBox = new google.maps.places.SearchBox(input);
+        map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
-  </script>
+        // Bias the SearchBox results towards current map's viewport.
+        map.addListener('bounds_changed', function() {
+          searchBox.setBounds(map.getBounds());
+        });
 
+        var markers = [];
+        // Listen for the event fired when the user selects a prediction and retrieve
+        // more details for that place.
+        searchBox.addListener('places_changed', function() {
+          var places = searchBox.getPlaces();
+
+          if (places.length == 0) {
+            return;
+          }
+
+          // Clear out the old markers.
+          markers.forEach(function(marker) {
+            marker.setMap(null);
+          });
+          markers = [];
+
+          // For each place, get the icon, name and location.
+          var bounds = new google.maps.LatLngBounds();
+          places.forEach(function(place) {
+            if (!place.geometry) {
+              console.log("Returned place contains no geometry");
+              return;
+            }
+            var icon = {
+              url: place.icon,
+              size: new google.maps.Size(71, 71),
+              origin: new google.maps.Point(0, 0),
+              anchor: new google.maps.Point(17, 34),
+              scaledSize: new google.maps.Size(25, 25)
+            };
+
+            // Create a marker for each place.
+            markers.push(new google.maps.Marker({
+              map: map,
+              icon: icon,
+              title: place.name,
+              position: place.geometry.location
+            }));
+
+            if (place.geometry.viewport) {
+              // Only geocodes have viewport.
+              bounds.union(place.geometry.viewport);
+            } else {
+              bounds.extend(place.geometry.location);
+            }
+          });
+          map.fitBounds(bounds);
+        });
+      }
+
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAnpNhNn2dOYuHrpHCd4A80FvWNelv56zM&libraries=places&callback=initAutocomplete"
+         async defer></script>
+         <script src="https://code.jquery.com/jquery.js"></script>
+
+  <!-- Bootstrap Javascript, because Modals are nice.-->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  
   <script type="text/javascript" src="js/javascript.js"></script>
-</body>
-
+  </body>
 </html>
