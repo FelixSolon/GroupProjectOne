@@ -25,10 +25,13 @@ Due to technical and access limitations of the APIs available, we were forced to
 * Eric integrated the USAJobs API and integrated the final code.
 
 ### Individual Responsibilities
+
 Eric: 
 * I was personally responsible for finding the Job Hunt API and incorporating it into the website, as well as getting the Firebase storage working to hold the API keys so they weren't publically visible on our website and incorporating the Google Maps search into the HTML of the website.
+
 Zack:
 *
+
 Dwayne:
 *
 
