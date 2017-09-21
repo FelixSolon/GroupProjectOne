@@ -392,6 +392,9 @@ function initAutocomplete() {
       }).done(function(response) {
         console.log(response);
         //Clear out the "Found Jobs" panel each search before adding new stuff in.
+        if (response.SearchResult.SearchResultCount == "0"){
+          $("#alertModal").modal();
+        }
         $("#found-jobs").empty();
         for (var i = 0; i < response.SearchResult.SearchResultItems.length; i++) {
         var div = $("<div>")
@@ -418,6 +421,7 @@ function initAutocomplete() {
         panelBody.append(applyText);
         
         $("#found-jobs").append(div);
+
 
       }
 
