@@ -69,8 +69,7 @@ var radius = 0;
     // Capture Button Click
     $(document).on("click", "#add-user", function(event) {
       event.preventDefault();
-      console.log("Something happens here.");
-      $("#pac-input").trigger("geocode")
+      input=$("#pac-input");
       // Grabbed values from text boxes
       job = $("#job-input").val().trim();
       address = $("#address-input").val().trim();
@@ -79,6 +78,28 @@ var radius = 0;
       salary = $("#salaryRange-input").val().trim();
       //state = $("#state-input").val().trim();
       // Code for handling the push
+      input.value="apartments near " + address;
+      google.maps.event.trigger(input, 'focus');
+      google.maps.event.trigger(input, 'keydown', {
+          keyCode: 13
+      });
+      //uses regular expressions to make sure that all inputs are made up of 0-9, a-Z, hypen, or space
+      //pops up a modal yelling at the user if it does
+      //Actually modified from stack overflow, not just stolen, as it was triggering on Commas, too.
+      //Yes, I learned how to use regular expressions for this stupid project.
+      if(/^[a-zA-Z0-9- ,]*$/.test(job) == false) {
+        $("#validationModal").modal();
+        return false;
+      }
+      if(/^[a-zA-Z0-9- ,]*$/.test(address) == false) {
+        $("#validationModal").modal();
+        return false;
+      }
+      if(/^[a-zA-Z0-9- ,]*$/.test(radius) == false) {
+        $("#validationModal").modal();
+        return false;
+      }
+
       database.ref().push({
         job: job,
         address: address,
@@ -103,7 +124,6 @@ var radius = 0;
       runGoogleQuery(googleMapsQueryUrl)
       console.log("Things are happening")
       console.log("Address: " + address)
-      $("#pac-input").attr("value", "apartments near " + address);
       console.log($("#pac-input"));
 
     });
