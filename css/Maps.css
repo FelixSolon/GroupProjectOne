@@ -1,24 +1,48 @@
+body {
+  color: #333;
+}
+
+body, input, button {
+  line-height: 1.4;
+  font: 13px Helvetica,arial,freesans,clean,sans-serif;
+}
 
 
+a {
+  color: #4183C4;
+  text-decoration: none;
+}
 
-/*<!--googlemaps style-->*?
+#examples a {
+  text-decoration: underline;
+}
 
+#geocomplete { width: 200px}
 
-/* Always set the map height explicitly to define the size of the div
+.map_canvas { 
+  width: 100%; 
+  height: 307px; 
+  margin: 10px 20px 10px 0;
+}
+
+#multiple li { 
+  cursor: pointer; 
+  text-decoration: underline; 
+}
+
+<style>
+      /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
       #map {
-        margin:50px;
-        height: 50%;
-        width: 50%;
+        height: 100%;
       }
       /* Optional: Makes the sample page fill the window. */
       html, body {
         height: 100%;
         margin: 0;
         padding: 0;
-      }   
-
-        #description {
+      }
+      #description {
         font-family: Roboto;
         font-size: 15px;
         font-weight: 300;
